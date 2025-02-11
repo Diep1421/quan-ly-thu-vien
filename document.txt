@@ -1,0 +1,22 @@
+b1: khởi tạo dự án
+	tạo 2 folder: client + server
+	cách tạo dự án reactjs: npx create-react-app {ten folder}  (trong ngoặc nhọn có thể thay đổi)
+	tạo folder server: npm init -y (tạo file packet.json)
+	ở folder server sẽ tải những thư viện để  viết api: nodemon, cors, express, mongodb, mongoose, dotenv
+		npm install {những thư viện cần sử dụng}
+	tạo 1 folder src trong server
+	tạo 1 file .env trong server (file .env là file lưu trữ những thông tin bảo mật ví dụ: port,
+	 password, username của tài khoản mongodb(data base) )
+	tạo database trên server của mongodb
+		phải set lại network access trên web thành allow all ip
+	trong 1 file .env khai báo theo dạng tên biến viết hoa toàn bộ ví dụ DB_NAME = library.
+	trong src tạo 1 folder view/app.js(đây là file bắt đầu của dự án)
+	trong src tạo lần lượt các foler config(chứa liên kết với database và quản lý phản hồi,thông báo)
+	trong src tạo lần lượt các foler Controllers(folder này là folder để viết những api chính)
+	trong src tạo lần lượt các foler Models(là khai báo database, tạo thuộc tính schema)
+	trong src tạo lần lượt các foler Routes(sẽ sử dụng Controllers và middlewares để kết nối với file app.js)
+sử dụng nodemon phải khai báo lại trong file packet.json( "start": "nodemon src/view/app.js")
+bước 2: bắt đầu kết nối đến data base ở file bắt đầu dự án 
+	bắt đầu viết từ Controllers rồi import vào routes xong rồi lấy routes ra file src/app.js
+
+FontEnd:
