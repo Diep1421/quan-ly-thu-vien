@@ -5,11 +5,14 @@ import { CallSignUp } from "../redux/reducers/auth/signUp"; // Đảm bảo Call
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
     confirmPassword: "",
     phone: "", // Thêm số điện thoại
+    role: "",
   });
 
   const handleChange = (e) => {
@@ -36,10 +39,14 @@ export default function SignUp() {
 
     try {
       const res = await CallSignUp({
-        name: formData.name,
+        username: formData.username,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
         password: formData.password,
+        confirmpassword: formData.confirmpassword,
         phone: formData.phone, // Gửi thông tin số điện thoại
+        role: formData.role,
       });
 
       if (res?.status === 200) {
@@ -70,12 +77,34 @@ export default function SignUp() {
       <h2 className="text-center">Đăng Ký</h2>
       <form onSubmit={handleSignUp} className="w-50 mx-auto">
         <div className="mb-3">
-          <label className="form-label">Họ và Tên</label>
+          <label className="form-label">User Name</label>
           <input
             type="text"
-            name="name"
+            name="username"
             className="form-control"
-            value={formData.name}
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">first_name</label>
+          <input
+            type="text"
+            name="first_name"
+            className="form-control"
+            value={formData.first_name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">last_name</label>
+          <input
+            type="text"
+            name="last_name"
+            className="form-control"
+            value={formData.last_name}
             onChange={handleChange}
             required
           />

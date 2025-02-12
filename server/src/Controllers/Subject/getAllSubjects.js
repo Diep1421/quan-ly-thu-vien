@@ -1,5 +1,5 @@
 const Subject = require("../../Models/Subject.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const getAllSubjects = async (req, res) => {
   const { keyword } = req.query;
@@ -12,7 +12,7 @@ const getAllSubjects = async (req, res) => {
     }
     return failCode(res, "", "danh sách Môn Học trống");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 module.exports = { getAllSubjects };

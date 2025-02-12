@@ -18,15 +18,7 @@ const failCode = (res, data, message) => {
   });
 };
 //500
-const errorCodeNew = (res, message) => {
-  res.status(500).send({
-    statusCode: 500,
-    message: "An unresolved error occurred!",
-    content:
-      "The number of rows provided for a FETCH clause must be greater then zero.",
-    dateTime: date,
-  });
-};
+
 const errorCode = (res, message) => {
   res
     .status(500)
@@ -36,5 +28,4 @@ module.exports = {
   successCode,
   failCode,
   errorCode,
-  errorCodeNew,
 };

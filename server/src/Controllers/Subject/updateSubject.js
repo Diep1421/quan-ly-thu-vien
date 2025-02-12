@@ -1,5 +1,5 @@
 const Subject = require("../../Models/Subject.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const updateSubject = async (req, res) => {
   try {
@@ -22,7 +22,7 @@ const updateSubject = async (req, res) => {
     }
     return successCode(res, subject, "Cập nhật Môn Học thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

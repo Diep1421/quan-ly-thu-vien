@@ -1,9 +1,10 @@
 const User = require("../../Models/User.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const signUp = async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    const { username, first_name, last_name, email, password, phone } =
+      req.body;
 
     // Kiểm tra nếu email đã tồn tại trong hệ thống
     const checkEmail = await User.findOne({ email });
@@ -13,17 +14,19 @@ const signUp = async (req, res) => {
 
     // Tạo người dùng mới và lưu vào database
     const user = await User.create({
+      username,
       first_name,
       last_name,
       email,
       password, // Lưu mật khẩu thô
+      phone,
       role: "user",
     });
 
     return successCode(res, user, "Đăng Ký thành công");
   } catch (error) {
     console.error(error);
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 

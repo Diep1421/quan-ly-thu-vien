@@ -18,18 +18,22 @@ const BookSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: "Author", // Liên kết với Author model\
     },
     major: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: "Major", // Liên kết với Major model (Ngành)
     },
     subject: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: "Subject", // Liên kết với Subject model (Môn)
     },
     department: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: "Department", // Liên kết với Department model (Khoa)
     },
   },

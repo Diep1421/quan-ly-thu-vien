@@ -1,5 +1,5 @@
 const Book = require("../../Models/Book.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const getAllBooks = async (req, res) => {
   // try {
@@ -16,6 +16,10 @@ const getAllBooks = async (req, res) => {
 
   // Tìm kiếm, sắp xếp và phân trang dữ liệu
   const books = await Book.find(filter)
+    .populate("major", "name description")
+    .populate("subject", "name description")
+    .populate("author", "name")
+    .populate("department", "name")
     .sort({ [sortBy]: sortOrder }) // Sắp xếp theo field mong muốn
     .skip(skip) // Bỏ qua `skip` bản ghi
     .limit(parseInt(limit)); // Giới hạn số lượng bản ghi trả về
@@ -32,7 +36,7 @@ const getAllBooks = async (req, res) => {
   }
   return failCode(res, "", "Danh sách book trống");
   // } catch (error) {
-  //   return errorCodeNew(res, error, "Lỗi 500");
+  //   return errorCode(res, error, "Lỗi 500");
   // }
 };
 

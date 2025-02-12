@@ -1,10 +1,10 @@
 import { http } from "../../../Utils/baseUrl";
 
-export const CallSignUp = async (data) => {
+export const CallCreateUser = async (data) => {
   try {
     const result = await http.post("/auth/signup", data);
-    return result;
+    return result.data;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };

@@ -1,5 +1,5 @@
 const Department = require("../../Models/Department.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const updateDepartment = async (req, res) => {
   try {
@@ -22,7 +22,7 @@ const updateDepartment = async (req, res) => {
     }
     return successCode(res, department, "Cập nhật khoa thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

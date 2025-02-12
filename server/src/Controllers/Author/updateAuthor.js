@@ -1,5 +1,5 @@
 const Author = require("../../Models/Author.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const updateAuthor = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ const updateAuthor = async (req, res) => {
     }
     return successCode(res, author, "Cập nhật tác giả thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

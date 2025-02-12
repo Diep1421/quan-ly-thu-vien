@@ -3,7 +3,7 @@ const Author = require("../../Models/Author.model");
 const Major = require("../../Models/Major.model");
 const Subject = require("../../Models/Subject.model");
 const Department = require("../../Models/Department.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const createBook = async (req, res) => {
   try {
@@ -18,6 +18,9 @@ const createBook = async (req, res) => {
       department,
     } = req.body;
 
+    if (!author || !major || !subject || !department) {
+      return failCode(res, null, "Vui lòng nhập đầy đủ các trường");
+    }
     // Kiểm tra xem các trường có tồn tại trong database không
     const authorExists = await Author.findById(author);
     if (!authorExists) return failCode(res, null, "Tác giả không tồn tại");
@@ -42,13 +45,13 @@ const createBook = async (req, res) => {
       isbn,
       author,
       major,
-      // subject,
+      subject,
       department,
     });
 
     return successCode(res, book, "Tạo sách thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

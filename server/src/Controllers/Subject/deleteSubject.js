@@ -1,5 +1,5 @@
 const Subject = require("../../Models/Subject.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const deleteSubject = async (req, res) => {
   try {
@@ -15,7 +15,7 @@ const deleteSubject = async (req, res) => {
 
     return successCode(res, subject, "Xóa Môn Học thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

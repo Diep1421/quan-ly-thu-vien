@@ -1,5 +1,5 @@
 const Author = require("../../Models/Author.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const deleteAuthor = async (req, res) => {
   try {
@@ -15,7 +15,7 @@ const deleteAuthor = async (req, res) => {
 
     return successCode(res, author, "Xóa tác giả thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    retur(res, error, "Lỗi 500");
   }
 };
 

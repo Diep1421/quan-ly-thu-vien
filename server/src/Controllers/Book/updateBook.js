@@ -1,30 +1,42 @@
 const Book = require("../../Models/Book.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const updateBook = async (req, res) => {
   try {
     const { id } = req.params; // Lấy id từ params
-    const { name, bio, date_of_birth, date_of_death } = req.body; // Lấy dữ liệu cần cập nhật
+    const {
+      title,
+      description,
+      published_date,
+      isbn,
+      author,
+      major,
+      subject,
+      department,
+    } = req.body;
+    if (!author || !major || !subject || !department) {
+      return failCode(res, null, "Vui lòng nhập đầy đủ các trường");
+    }
     const book = await Book.findOneAndUpdate(
       { _id: id },
       {
-        name,
-        bio,
-        date_of_birth,
-        date_of_death,
+        title,
+        description,
+        published_date,
+        isbn,
+        author,
+        major,
+        subject,
+        department,
       },
       { new: true }
     );
-    console.log(id);
-
-    console.log(book);
-
     if (!book) {
-      return failCode(res, null, "Không tìm thấy tác giả");
+      return failCode(res, null, "Không tìm thấy sách");
     }
-    return successCode(res, book, "Cập nhật tác giả thành công");
+    return successCode(res, book, "Cập nhật sách thành công");
   } catch (error) {
-    return errorCodeNew(res, error, "Lỗi 500");
+    return errorCode(res, error, "Lỗi 500");
   }
 };
 

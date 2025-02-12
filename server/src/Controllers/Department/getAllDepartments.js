@@ -1,5 +1,5 @@
 const Department = require("../../Models/Department.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const getAllDepartments = async (req, res) => {
   const { keyword } = req.query;
@@ -12,7 +12,7 @@ const getAllDepartments = async (req, res) => {
     }
     return failCode(res, "", "danh sách người dùng trống");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 module.exports = { getAllDepartments };

@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Table } from "react-bootstrap";
+import { Button, Form, Modal, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { CallGetALlBooks } from "../redux/reducers/books/getAllBooks";
+import { CallGetAllAuthors } from "../redux/reducers/author/getAllAuthor";
+import { CallGetAllMajors } from "../redux/reducers/major/getAllMajors";
+import { CallGetAllDepartments } from "../redux/reducers/department/getAllDepartments";
+import { CallGetAllSubjects } from "../redux/reducers/subject/getAllSubjects";
+import { CallCreateBook } from "../redux/reducers/books/createBook";
+import { CallUpdateBook } from "../redux/reducers/books/updateBook";
+import { CallDeleteBook } from "../redux/reducers/books/deleteBook";
 
 const BookForm = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +22,38 @@ const BookForm = () => {
     subject: "",
     department: "",
   });
+  // biến của modal create và edit
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => {
+    setIsEdit(!isEdit);
+    setShow(false);
+  };
+  //
+  const handleShow = () => setShow(true);
+  // biến của modal delete
+
+  const [showDelete, setShowDelete] = useState(false);
+
+  const handleCloseDelete = () => {
+    setShowDelete(false);
+  };
+  //
+  const handleShowDelete = (bookId) => {
+    setBookId(bookId);
+    setShowDelete(true);
+  };
   const [books, setBooks] = useState([]);
+  const [authors, setAuthors] = useState([]);
+  const [majors, setMajors] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [keyword, setKeyword] = useState("");
   const [order, setOrder] = useState("asc");
   const [isEdit, setIsEdit] = useState(false);
+  const [bookId, setBookId] = useState("");
   useEffect(() => {
     const fetchBooks = async () => {
       try {
@@ -32,6 +64,14 @@ const BookForm = () => {
           limit,
           order,
         });
+        const authors = await CallGetAllAuthors();
+        const majors = await CallGetAllMajors();
+        const subjects = await CallGetAllSubjects();
+        const departments = await CallGetAllDepartments();
+        setAuthors(authors.content);
+        setSubjects(subjects.content);
+        setMajors(majors.content);
+        setDepartments(departments.content);
         setBooks(result.books);
         setLimit(result.limit);
       } catch (error) {
@@ -39,8 +79,7 @@ const BookForm = () => {
       }
     };
     fetchBooks();
-  }, [page, keyword, order, limit]);
-
+  }, [page, keyword, order, limit, books]);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -48,86 +87,135 @@ const BookForm = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleCreateBook = async (e) => {
     e.preventDefault();
-
-    if (!formData.title || !formData.author) {
+    const result = await CallCreateBook(formData);
+    if (result.statusCode === 200) {
+      handleClose();
       Swal.fire({
-        icon: "error",
-        title: "Lỗi",
-        text: "Vui lòng nhập đầy đủ thông tin!",
+        icon: "success",
+        title: "Sách đã được thêm!",
+        showConfirmButton: false,
+        timer: 2000,
       });
-      return;
-    }
 
-    try {
-      //   const res = await CallAddBook(formData);
-      //   if (res?.status === 200) {
-      //     Swal.fire({
-      //       icon: "success",
-      //       title: "Sách đã được thêm!",
-      //       showConfirmButton: false,
-      //       timer: 2000,
-      //     });
-      //     setFormData({
-      //       title: "",
-      //       description: "",
-      //       published_date: "",
-      //       isbn: "",
-      //       author: "",
-      //       major: "",
-      //       subject: "",
-      //       department: "",
-      //     });
-      //   } else {
-      //     throw new Error(res?.message || "Có lỗi xảy ra!");
-      //   }
-    } catch (error) {
+      setFormData({
+        title: "",
+        description: "",
+        published_date: "",
+        isbn: "",
+        author: "",
+        major: "",
+        subject: "",
+        department: "",
+      });
+      const updatedList = await CallGetALlBooks({
+        keyword,
+        sortBy: "title",
+        page,
+        limit,
+        order,
+      });
+      if (updatedList && updatedList.content) {
+        setBooks(updatedList.books);
+      }
+    } else {
       Swal.fire({
         icon: "error",
-        title: "Lỗi thêm sách",
-        text: error.message || "Có lỗi xảy ra, vui lòng thử lại.",
+        title: result?.response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
       });
     }
   };
 
-  const handleDelete = async (bookId) => {
-    // try {
-    //   const res = await CallDeleteBook(bookId);
-    //   if (res?.status === 200) {
-    //     Swal.fire({
-    //       icon: "success",
-    //       title: "Sách đã được xóa!",
-    //       showConfirmButton: false,
-    //       timer: 2000,
-    //     });
-    //     // Reload book list after delete
-    //     setBooks(books.filter((book) => book.id !== bookId));
-    //   } else {
-    //     throw new Error("Không thể xóa sách.");
-    //   }
-    // } catch (error) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Lỗi xóa sách",
-    //     text: error.message || "Có lỗi xảy ra, vui lòng thử lại.",
-    //   });
-    // }
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    const result = await CallDeleteBook(bookId);
+    if (result.statusCode === 200) {
+      handleCloseDelete();
+      Swal.fire({
+        icon: "success",
+        title: "Xoá sách thành công!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+      const updatedList = await CallGetALlBooks({
+        keyword,
+        sortBy: "title",
+        page,
+        limit,
+        order,
+      });
+      if (updatedList && updatedList.content) {
+        setBooks(updatedList.books);
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: result?.response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
   };
 
   const handleEdit = (book) => {
+    setBookId(book._id);
+    setIsEdit(true);
+    handleShow();
     setFormData({
       title: book.title,
       description: book.description,
       published_date: book.published_date,
       isbn: book.isbn,
-      author: book.author,
-      major: book.major,
-      subject: book.subject,
-      department: book.department,
+      author: book.author._id,
+      major: book.major._id,
+      subject: book.subject._id,
+      department: book.department._id,
     });
   };
+  const handleUpdateBook = async (e) => {
+    e.preventDefault();
+    const result = await CallUpdateBook(bookId, formData);
+    if (result.statusCode === 200) {
+      setShow(false);
+      Swal.fire({
+        icon: "success",
+        title: "Cập nhật sách thành công!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
 
+      setFormData({
+        title: "",
+        description: "",
+        published_date: "",
+        isbn: "",
+        author: "",
+        major: "",
+        subject: "",
+        department: "",
+      });
+      const updatedList = await CallGetALlBooks({
+        keyword,
+        sortBy: "title",
+        page,
+        limit,
+        order,
+      });
+      if (updatedList && updatedList.content) {
+        setBooks(updatedList.books);
+      }
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: result?.response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
+  };
   const handleSearch = (e) => {
     setKeyword(e.target.value);
   };
@@ -143,111 +231,139 @@ const BookForm = () => {
   return (
     <div className="container mt-5">
       <h2 className="text-center">Quản lý sách</h2>
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-toggle="modal"
-        data-target="#exampleModal"
-      >
-        Launch demo modal
-      </button>
+      <Button variant="primary" onClick={handleShow}>
+        Tạo sách
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>{isEdit ? "Chỉnh sửa sách" : "Tạo sách"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {" "}
+          <Form onSubmit={handleCreateBook}>
+            <Form.Group className="mb-3">
+              <Form.Label> Title</Form.Label>
+              <Form.Control
+                name="title"
+                type="text"
+                placeholder="Enter title"
+                value={formData.title}
+                onChange={handleChange}
+              />
+            </Form.Group>{" "}
+            <Form.Group className="mb-3">
+              <Form.Label>description</Form.Label>
+              <Form.Control
+                name="description"
+                type="text"
+                placeholder="Enter description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>published_date</Form.Label>
+              <Form.Control
+                name="published_date"
+                type="date"
+                placeholder="Enter published_date"
+                value={formData.published_date}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>isbn</Form.Label>
+              <Form.Control
+                name="isbn"
+                type="number"
+                placeholder="Enter isbn"
+                value={formData.isbn}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Author</Form.Label>
+              <Form.Select
+                name="author"
+                placeholder="Enter Author"
+                value={formData.author}
+                onChange={handleChange}
+              >
+                <option value="">Chọn tác giả</option>
+                {authors.map((author) => (
+                  <option key={author._id} value={author._id}>
+                    {author.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>major</Form.Label>
+              <Form.Select
+                name="major"
+                placeholder="Enter major"
+                value={formData.major}
+                onChange={handleChange}
+              >
+                <option value="">Chọn ngành</option>
 
-      <div
-        class="modal fade"
-        id="exampleModal"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">
-                Modal title
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
+                {majors.map((major) => (
+                  <option key={major._id} value={major._id}>
+                    {major.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>department</Form.Label>
+              <Form.Select
+                name="department"
+                placeholder="Enter department"
+                value={formData.department}
+                onChange={handleChange}
               >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">...</div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
+                <option value="">Chọn khoa</option>
+
+                {departments.map((department) => (
+                  <option key={department._id} value={department._id}>
+                    {department.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>subject</Form.Label>
+              <Form.Select
+                name="subject"
+                placeholder="Enter subject"
+                value={formData.subject}
+                onChange={handleChange}
               >
-                Close
-              </button>
-              <button type="button" class="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Form onSubmit={handleSubmit} className="w-50 mx-auto">
-        <div className="mb-3">
-          <label className="form-label">Tiêu đề</label>
-          <input
-            type="text"
-            name="title"
-            className="form-control"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Mô tả</label>
-          <input
-            type="text"
-            name="description"
-            className="form-control"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Ngày xuất bản</label>
-          <input
-            type="date"
-            name="published_date"
-            className="form-control"
-            value={formData.published_date}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">ISBN</label>
-          <input
-            type="text"
-            name="isbn"
-            className="form-control"
-            value={formData.isbn}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Tác giả</label>
-          <input
-            type="text"
-            name="author"
-            className="form-control"
-            value={formData.author}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-success w-100">
-          Thêm sách
-        </button>
-      </Form>
+                <option value="">Chọn môn</option>
+
+                {subjects.map((subject) => (
+                  <option key={subject._id} value={subject._id}>
+                    {subject.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            onClick={isEdit ? handleUpdateBook : handleCreateBook}
+          >
+            {isEdit ? "Cập nhật" : "Tạo mới"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <div className="my-3">
         <input
           type="text"
@@ -266,6 +382,9 @@ const BookForm = () => {
             <th>#</th>
             <th>Tiêu đề</th>
             <th>Tác giả</th>
+            <th>Môn</th>
+            <th>Ngành</th>
+            <th>Khoa</th>
             <th>Ngày xuất bản</th>
             <th>ISBN</th>
             <th>Thao tác</th>
@@ -273,17 +392,23 @@ const BookForm = () => {
         </thead>
         <tbody>
           {books.map((book, index) => (
-            <tr key={book.id}>
+            <tr key={index}>
               <td>{index + 1}</td>
               <td>{book.title}</td>
-              <td>{book.author}</td>
+              <td>{book.author.name}</td>
+              <td>{book.subject.name}</td>
+              <td>{book.major.name}</td>
+              <td>{book.department.name}</td>
               <td>{book.published_date}</td>
               <td>{book.isbn}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEdit(book)}>
                   Sửa
                 </Button>{" "}
-                <Button variant="danger" onClick={() => handleDelete(book.id)}>
+                <Button
+                  variant="danger"
+                  onClick={() => handleShowDelete(book._id)}
+                >
                   Xóa
                 </Button>
               </td>
@@ -291,7 +416,19 @@ const BookForm = () => {
           ))}
         </tbody>
       </Table>
-
+      <Modal show={showDelete} onHide={handleCloseDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Bạn có chắc chắn khi xoá sách này không ?</Modal.Title>
+        </Modal.Header>
+        <div className="d-grid m-3 p-3 gap-3">
+          <Button variant="danger" onClick={handleCloseDelete}>
+            Không
+          </Button>
+          <Button variant="success" onClick={handleDelete}>
+            Có
+          </Button>
+        </div>
+      </Modal>
       {/* Phân trang */}
       <div className="d-flex justify-content-between">
         <Button

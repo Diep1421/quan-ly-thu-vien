@@ -1,5 +1,5 @@
 const User = require("../../Models/User.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const getUserById = async (req, res) => {
   const { id } = req.params;
@@ -10,7 +10,7 @@ const getUserById = async (req, res) => {
     }
     return failCode(res, "", "danh sách người dùng trống");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 module.exports = { getUserById };

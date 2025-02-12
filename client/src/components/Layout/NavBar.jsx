@@ -40,6 +40,31 @@ export default function NavBar() {
                 <Link className="nav-link" to="/book">
                   Sách
                 </Link>
+              </li>{" "}
+              <li className="nav-item">
+                <Link className="nav-link" to="/author">
+                  tác giả
+                </Link>
+              </li>{" "}
+              <li className="nav-item">
+                <Link className="nav-link" to="/department">
+                  Khoa
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/major">
+                  Ngành
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/subject">
+                  Môn
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/user">
+                  Users
+                </Link>
               </li>
             </div>
 

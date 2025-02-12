@@ -1,5 +1,5 @@
 const Major = require("../../Models/Major.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const getAllMajors = async (req, res) => {
   const { keyword } = req.query;
@@ -12,7 +12,7 @@ const getAllMajors = async (req, res) => {
     }
     return failCode(res, "", "danh sách Nghành trống");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 module.exports = { getAllMajors };

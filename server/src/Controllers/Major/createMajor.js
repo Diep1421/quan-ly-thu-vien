@@ -1,5 +1,5 @@
 const Major = require("../../Models/Major.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const createMajor = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ const createMajor = async (req, res) => {
     });
     return successCode(res, major, "Tạo Ngành thành công");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 

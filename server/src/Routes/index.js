@@ -71,4 +71,5 @@ rootRoute.use("/book", createBook);
 rootRoute.use("/book", getAllBooks);
 rootRoute.use("/book", updateBooks);
 rootRoute.use("/book", deleteBooks);
+//nhớ exports route
 module.exports = rootRoute;

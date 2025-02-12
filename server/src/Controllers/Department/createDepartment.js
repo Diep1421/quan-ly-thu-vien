@@ -1,5 +1,5 @@
 const Department = require("../../Models/Department.model");
-const { failCode, successCode, errorCodeNew } = require("../../config/reponse");
+const { failCode, successCode, errorCode } = require("../../config/reponse");
 
 const createDepartment = async (req, res) => {
   try {
@@ -10,7 +10,7 @@ const createDepartment = async (req, res) => {
     });
     return successCode(res, department, "Tạo Khoa thành công");
   } catch (error) {
-    return errorCodeNew(error, "Lỗi 500");
+    return errorCode(error, "Lỗi 500");
   }
 };
 
