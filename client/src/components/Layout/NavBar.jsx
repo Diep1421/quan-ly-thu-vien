@@ -1,134 +1,113 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function NavBar() {
-  const userData = JSON.parse(localStorage.getItem("dataUser"));
-  const isLoggedIn = userData !== null; // Kiểm tra trạng thái đăng nhập
+const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("data");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("dataUser");
-    window.location.reload();
+    localStorage.removeItem("data");
+    setUser(null);
+    navigate("/login");
   };
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
-          Quản Lý Thư Viện
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav w-100 d-flex justify-content-between align-items-center">
-            {/* Menu bên trái */}
-            <div className="d-flex">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">
-                  Trang Chủ
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/book">
-                  Sách
-                </Link>
-              </li>{" "}
-              <li className="nav-item">
-                <Link className="nav-link" to="/author">
-                  tác giả
-                </Link>
-              </li>{" "}
-              <li className="nav-item">
-                <Link className="nav-link" to="/department">
-                  Khoa
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/major">
-                  Ngành
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/subject">
-                  Môn
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/user">
-                  Users
-                </Link>
-              </li>
-            </div>
+    <aside className="bg-gray-800 w-64 h-screen p-6 shadow-lg flex flex-col justify-between">
+      {/* Phần menu */}
+      <ul className="space-y-4">
+        <li>
+          <Link
+            to="/admin/authors"
+            className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-200"
+          >
+            Quản lý tác giả
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin/books"
+            className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-200"
+          >
+            Quản lý Sách
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin/departments"
+            className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-200"
+          >
+            Quản lý Khoa
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin/majors"
+            className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-200"
+          >
+            Quản lý Ngành
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/admin/subjects"
+            className="text-white text-lg font-semibold hover:text-yellow-400 transition duration-200"
+          >
+            Quản lý Môn
+          </Link>
+        </li>
+        {user?.role == "admin" ? (
+          <li>
+            <Link
+              to="/admin/users"
+              className="text-white text-lg font-semibold hover:text-yellow-400"
+            >
+              Quản lý người dùng
+            </Link>
+          </li>
+        ) : (
+          ""
+        )}
+      </ul>
 
-            {/* Avatar hoặc Đăng Nhập/Đăng Ký bên phải */}
-            <div>
-              {isLoggedIn ? (
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle d-flex align-items-center"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <img
-                      src={`https://ui-avatars.com/api/?name=${userData.username}`}
-                      alt="Avatar"
-                      className="rounded-circle"
-                      width="32"
-                      height="32"
-                    />
-                    <span className="ms-2">{userData.username}</span>
-                  </a>
-                  <ul
-                    className="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="navbarDropdown"
-                  >
-                    <li>
-                      <Link className="dropdown-item" to="/profile">
-                        Trang cá nhân
-                      </Link>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item text-danger"
-                        onClick={handleLogout}
-                      >
-                        Đăng Xuất
-                      </button>
-                    </li>
-                  </ul>
-                </li>
-              ) : (
-                <div className="d-flex flex-col">
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/login">
-                      Đăng Nhập
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="/signup">
-                      Đăng Ký
-                    </Link>
-                  </li>
-                </div>
-              )}
-            </div>
-          </ul>
-        </div>
+      {/* Phần thông tin user */}
+      <div className="mt-auto">
+        {user ? (
+          <div className="text-center">
+            <p className="text-white text-lg font-semibold mb-2">
+              Xin chào, {user.username}
+            </p>
+            <button
+              onClick={handleLogout}
+              className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-200"
+            >
+              Đăng xuất
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Link
+              to="/login"
+              className="block w-full bg-blue-500 text-white text-center py-2 rounded-md hover:bg-blue-600 transition duration-200"
+            >
+              Đăng nhập
+            </Link>
+            <Link
+              to="/signup"
+              className="block w-full bg-green-500 text-white text-center py-2 rounded-md hover:bg-green-600 transition duration-200"
+            >
+              Đăng ký
+            </Link>
+          </div>
+        )}
       </div>
-    </nav>
+    </aside>
   );
-}
+};
+
+export default Navbar;

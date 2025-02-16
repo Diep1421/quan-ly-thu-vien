@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Modal, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { CallGetALlBooks } from "../redux/reducers/books/getAllBooks";
-import { CallGetAllAuthors } from "../redux/reducers/author/getAllAuthor";
-import { CallGetAllMajors } from "../redux/reducers/major/getAllMajors";
-import { CallGetAllDepartments } from "../redux/reducers/department/getAllDepartments";
-import { CallGetAllSubjects } from "../redux/reducers/subject/getAllSubjects";
-import { CallCreateBook } from "../redux/reducers/books/createBook";
-import { CallUpdateBook } from "../redux/reducers/books/updateBook";
-import { CallDeleteBook } from "../redux/reducers/books/deleteBook";
+import { CallGetALlBooks } from "../../redux/reducers/books/getAllBooks";
+import { CallGetAllAuthors } from "../../redux/reducers/author/getAllAuthor";
+import { CallGetAllMajors } from "../../redux/reducers/major/getAllMajors";
+import { CallGetAllDepartments } from "../../redux/reducers/department/getAllDepartments";
+import { CallGetAllSubjects } from "../../redux/reducers/subject/getAllSubjects";
+import { CallCreateBook } from "../../redux/reducers/books/createBook";
+import { CallUpdateBook } from "../../redux/reducers/books/updateBook";
+import { CallDeleteBook } from "../../redux/reducers/books/deleteBook";
 
 const BookForm = () => {
   const [formData, setFormData] = useState({
@@ -53,10 +53,14 @@ const BookForm = () => {
   const [keyword, setKeyword] = useState("");
   const [order, setOrder] = useState("asc");
   const [isEdit, setIsEdit] = useState(false);
+
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [bookId, setBookId] = useState("");
   useEffect(() => {
     const fetchBooks = async () => {
       try {
+        setLoading(true);
         const result = await CallGetALlBooks({
           keyword,
           sortBy: "title",
@@ -64,6 +68,20 @@ const BookForm = () => {
           limit,
           order,
         });
+        setTotalPages(result.totalPages);
+        setBooks(result.books);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
+  }, [page, keyword, order, limit]); // Giữ những biến liên quan đến việc fetch sách
+  // ⚠️ Chỉ giữ những biến làm thay đổi API
+  useEffect(() => {
+    const fetchStaticData = async () => {
+      try {
         const authors = await CallGetAllAuthors();
         const majors = await CallGetAllMajors();
         const subjects = await CallGetAllSubjects();
@@ -72,14 +90,13 @@ const BookForm = () => {
         setSubjects(subjects.content);
         setMajors(majors.content);
         setDepartments(departments.content);
-        setBooks(result.books);
-        setLimit(result.limit);
       } catch (error) {
-        console.error("Error fetching books:", error);
+        console.error("Error fetching static data:", error);
       }
     };
-    fetchBooks();
-  }, [page, keyword, order, limit, books]);
+    fetchStaticData();
+  }, []); // Chỉ gọi một lần khi component mount
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -220,16 +237,15 @@ const BookForm = () => {
     setKeyword(e.target.value);
   };
 
-  const handleSort = () => {
-    setOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-  };
-
   const handlePageChange = (page) => {
-    setPage(page);
+    if (page <= totalPages) {
+      setPage(page);
+    }
   };
 
   return (
     <div className="container mt-5">
+      {loading && <div>Loading</div>}
       <h2 className="text-center">Quản lý sách</h2>
       <Button variant="primary" onClick={handleShow}>
         Tạo sách
@@ -239,7 +255,6 @@ const BookForm = () => {
           <Modal.Title>{isEdit ? "Chỉnh sửa sách" : "Tạo sách"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {" "}
           <Form onSubmit={handleCreateBook}>
             <Form.Group className="mb-3">
               <Form.Label> Title</Form.Label>
@@ -290,7 +305,7 @@ const BookForm = () => {
                 onChange={handleChange}
               >
                 <option value="">Chọn tác giả</option>
-                {authors.map((author) => (
+                {authors?.map((author) => (
                   <option key={author._id} value={author._id}>
                     {author.name}
                   </option>
@@ -307,7 +322,7 @@ const BookForm = () => {
               >
                 <option value="">Chọn ngành</option>
 
-                {majors.map((major) => (
+                {majors?.map((major) => (
                   <option key={major._id} value={major._id}>
                     {major.name}
                   </option>
@@ -324,7 +339,7 @@ const BookForm = () => {
               >
                 <option value="">Chọn khoa</option>
 
-                {departments.map((department) => (
+                {departments?.map((department) => (
                   <option key={department._id} value={department._id}>
                     {department.name}
                   </option>
@@ -341,7 +356,7 @@ const BookForm = () => {
               >
                 <option value="">Chọn môn</option>
 
-                {subjects.map((subject) => (
+                {subjects?.map((subject) => (
                   <option key={subject._id} value={subject._id}>
                     {subject.name}
                   </option>
@@ -373,9 +388,26 @@ const BookForm = () => {
           onChange={handleSearch}
         />
       </div>
-      <Button variant="info" onClick={handleSort} className="mb-3">
-        Sắp xếp theo tên ({order === "asc" ? "Tăng dần" : "Giảm dần"})
-      </Button>
+      <Form.Select
+        name="sort"
+        value={order}
+        onChange={(e) => setOrder(e.target.value)}
+        className="my-2"
+      >
+        <option value="asc">sắp xếp tăng dần</option>
+        <option value="desc">sắp xếp giảm dần</option>
+      </Form.Select>
+      <Form.Select
+        name="limit"
+        value={limit}
+        onChange={(e) => setLimit(e.target.value)}
+        className="my-2"
+      >
+        <option value="1">1</option>
+        <option value="10">10</option>
+        <option value="5">5</option>
+        <option value="20">20</option>
+      </Form.Select>
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -391,29 +423,34 @@ const BookForm = () => {
           </tr>
         </thead>
         <tbody>
-          {books.map((book, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{book.title}</td>
-              <td>{book.author.name}</td>
-              <td>{book.subject.name}</td>
-              <td>{book.major.name}</td>
-              <td>{book.department.name}</td>
-              <td>{book.published_date}</td>
-              <td>{book.isbn}</td>
-              <td>
-                <Button variant="warning" onClick={() => handleEdit(book)}>
-                  Sửa
-                </Button>{" "}
-                <Button
-                  variant="danger"
-                  onClick={() => handleShowDelete(book._id)}
-                >
-                  Xóa
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {books?.map(
+            (book, index) => (
+              console.log(book),
+              (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{book.title}</td>
+                  <td>{book.author?.name}</td>
+                  <td>{book.subject?.name}</td>
+                  <td>{book.major?.name}</td>
+                  <td>{book.department?.name}</td>
+                  <td>{book.published_date}</td>
+                  <td>{book.isbn}</td>
+                  <td>
+                    <Button variant="warning" onClick={() => handleEdit(book)}>
+                      Sửa
+                    </Button>{" "}
+                    <Button
+                      variant="danger"
+                      onClick={() => handleShowDelete(book._id)}
+                    >
+                      Xóa
+                    </Button>
+                  </td>
+                </tr>
+              )
+            )
+          )}
         </tbody>
       </Table>
       <Modal show={showDelete} onHide={handleCloseDelete}>
@@ -439,7 +476,7 @@ const BookForm = () => {
           Trước
         </Button>
         <span>
-          Trang {page} / {limit}
+          Trang {page} / {totalPages}
         </span>
         <Button
           variant="secondary"

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { CallLogin } from "../redux/reducers/auth/login";
+import { CallLogin } from "../../redux/reducers/auth/login";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -9,8 +9,6 @@ export default function Login() {
     password: "",
   });
   const handleChange = (e) => {
-    console.log(e.target.name, e.target.value);
-
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,

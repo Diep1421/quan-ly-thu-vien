@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { CallSignUp } from "../redux/reducers/auth/signUp"; // Đảm bảo CallSignUp đã được import đúng
+import { CallSignUp } from "../../redux/reducers/auth/signUp"; // Đảm bảo CallSignUp đã được import đúng
 
 export default function SignUp() {
   const [formData, setFormData] = useState({

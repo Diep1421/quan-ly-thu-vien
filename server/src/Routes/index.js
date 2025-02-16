@@ -7,12 +7,14 @@ const login = require("./Auth/login");
 
 const getAllUsers = require("./user/getAllUsers");
 const getUserById = require("./user/getUserById");
+const updateUsers = require("./user/updateUser");
+const deleteUsers = require("./user/deleteUser");
 
 const createAuthor = require("./Author/createAuthor");
 const getAllAuthors = require("./Author/getAllAuthors");
 const updateAuthors = require("./Author/updateAuthor");
 const deleteAuthors = require("./Author/deleteAuthor");
-//auth
+//author
 const createDepartment = require("./Department/createDepartment");
 const getAllDepartments = require("./Department/getAllDepartments");
 const updateDepartments = require("./Department/updateDepartment");
@@ -41,6 +43,8 @@ rootRoute.use("/auth", login);
 
 rootRoute.use("/users", getAllUsers);
 rootRoute.use("/users", getUserById);
+rootRoute.use("/users", updateUsers);
+rootRoute.use("/users", deleteUsers);
 
 //author
 rootRoute.use("/author", createAuthor);

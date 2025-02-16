@@ -20,3 +20,11 @@ bước 2: bắt đầu kết nối đến data base ở file bắt đầu dự 
 	bắt đầu viết từ Controllers rồi import vào routes xong rồi lấy routes ra file src/app.js
 
 FontEnd:
+
+
+github 
+	git add .
+	git commit -m "done" (Trong ngoặc "" là message)
+	git push
+
+muốn lấy dự án của người khác về (vào folder muốn đặt) -> git clone https://github.com/Diep1421/quan-ly-thu-vien.git

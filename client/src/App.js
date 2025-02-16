@@ -1,38 +1,40 @@
+import "./App.css";
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import NavBar from "./components/Layout/NavBar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp"; // Đổi signUp thành SignUp
-import Book from "./pages/Book";
-import Author from "./pages/Author";
-import Department from "./pages/Department.jsx";
-import Major from "./pages/Major.jsx";
-import Subject from "./pages/Subject.jsx";
-import User from "./pages/User.jsx";
-
-// import Dashboard from "./pages/Dashboard";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+// import NavBar from "./components/layout/Navbar.jsx";
+import AdminNavbar from "./components/layout/AdminNavbar.jsx";
+import Home from "./components/layout/Home.jsx";
+import Login from "./components/layout/Login.jsx";
+import SignUp from "./components/layout/SignUp.jsx"; // Đổi signUp thành SignUp
+// import UserNavbar from "./components/layout/UserNavbar.jsx";
+import UserLayout from "./components/layout/UserLayout.jsx";
+import LayoutAdmin from "./components/layout/LayoutAdmin.jsx";
 
 function App() {
+  const user = JSON.parse(localStorage.getItem("dataUser"));
+  const isAdmin = user?.role === "admin";
   return (
     <Router>
-      <NavBar />
-      <div className="container mt-4">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/book" element={<Book />} />
-          <Route path="/author" element={<Author />} />
-          <Route path="/department" element={<Department />} />
-          <Route path="/major" element={<Major />} />
-          <Route path="/Subject" element={<Subject />} />
-          <Route path="/User" element={<User />} />
-          {/* Sửa signUp thành SignUp */}
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        </Routes>
-      </div>
+      <Routes>
+        {/* Các route dành cho admin */}
+        {isAdmin && <Route path="/admin/*" element={<LayoutAdmin />} />}
+        {/* Các route dành cho user */}
+        <Route path="/*" element={<UserLayout />}>
+          {/* Sử dụng index route cho trang chủ */}
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<SignUp />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </Router>
+    // {/* Sửa signUp thành SignUp */}
   );
 }
 
