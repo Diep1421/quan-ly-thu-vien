@@ -20,9 +20,9 @@ const updateUser = async (req, res) => {
       { new: true }
     );
     if (!user) {
-      return failCode(res, null, "Không tìm thấy sách");
+      return failCode(res, null, "Không tìm thấy user");
     }
-    return successCode(res, user, "Cập nhật sách thành công");
+    return successCode(res, user, "Cập nhật user thành công");
   } catch (error) {
     return errorCode(res, error, "Lỗi 500");
   }

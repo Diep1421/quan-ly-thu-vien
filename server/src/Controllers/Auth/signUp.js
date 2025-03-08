@@ -1,6 +1,6 @@
 const User = require("../../Models/User.model");
 const { failCode, successCode, errorCode } = require("../../config/reponse");
-
+const bcrypt = require("bcrypt");
 const signUp = async (req, res) => {
   try {
     const { username, first_name, last_name, email, password, phone } =
@@ -18,15 +18,14 @@ const signUp = async (req, res) => {
       first_name,
       last_name,
       email,
-      password, // Lưu mật khẩu thô
+      password: await bcrypt.hash(password, 10),
       phone,
       role: "user",
     });
 
     return successCode(res, user, "Đăng Ký thành công");
   } catch (error) {
-    console.error(error);
-    return errorCode(error, "Lỗi 500");
+    return errorCode(res, "Lỗi 500");
   }
 };
 

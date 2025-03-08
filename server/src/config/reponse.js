@@ -20,9 +20,7 @@ const failCode = (res, data, message) => {
 //500
 
 const errorCode = (res, message) => {
-  res
-    .status(500)
-    .send({ statusCode: 500, message: "Backend error", dateTime: date });
+  res.status(500).send({ statusCode: 500, message: message, dateTime: date });
 };
 module.exports = {
   successCode,

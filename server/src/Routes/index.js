@@ -7,14 +7,15 @@ const login = require("./Auth/login");
 
 const getAllUsers = require("./user/getAllUsers");
 const getUserById = require("./user/getUserById");
-const updateUsers = require("./user/updateUser");
-const deleteUsers = require("./user/deleteUser");
+const createUser = require("./user/createUser");
+const updateUser = require("./user/updateUser");
+const deleteUser = require("./user/deleteUser");
 
 const createAuthor = require("./Author/createAuthor");
 const getAllAuthors = require("./Author/getAllAuthors");
 const updateAuthors = require("./Author/updateAuthor");
 const deleteAuthors = require("./Author/deleteAuthor");
-//author
+//auth
 const createDepartment = require("./Department/createDepartment");
 const getAllDepartments = require("./Department/getAllDepartments");
 const updateDepartments = require("./Department/updateDepartment");
@@ -26,6 +27,11 @@ const getAllMajors = require("./Major/getAllMajors");
 const updateMajors = require("./Major/updateMajor");
 const deleteMajors = require("./Major/deleteMajor");
 //Major
+const createPropose = require("./Propose/createPropose");
+const getAllProposes = require("./Propose/getAllProposes");
+const updatePropose = require("./Propose/updatePropose");
+const deletePropose = require("./Propose/deletePropose");
+//Propose
 
 const createSubject = require("./Subject/createSubject");
 const getAllSubjects = require("./Subject/getAllSubjects");
@@ -43,8 +49,9 @@ rootRoute.use("/auth", login);
 
 rootRoute.use("/users", getAllUsers);
 rootRoute.use("/users", getUserById);
-rootRoute.use("/users", updateUsers);
-rootRoute.use("/users", deleteUsers);
+rootRoute.use("/users", createUser);
+rootRoute.use("/users", updateUser);
+rootRoute.use("/users", deleteUser);
 
 //author
 rootRoute.use("/author", createAuthor);
@@ -64,6 +71,12 @@ rootRoute.use("/major", getAllMajors);
 rootRoute.use("/major", updateMajors);
 rootRoute.use("/major", deleteMajors);
 
+// propose
+rootRoute.use("/propose", createPropose);
+rootRoute.use("/propose", getAllProposes);
+rootRoute.use("/propose", updatePropose);
+rootRoute.use("/propose", deletePropose);
+
 //Subject
 rootRoute.use("/subject", createSubject);
 rootRoute.use("/subject", getAllSubjects);
@@ -75,5 +88,6 @@ rootRoute.use("/book", createBook);
 rootRoute.use("/book", getAllBooks);
 rootRoute.use("/book", updateBooks);
 rootRoute.use("/book", deleteBooks);
-//nhớ exports route
+
+//nhớ export
 module.exports = rootRoute;

@@ -1,8 +1,8 @@
 b1: khởi tạo dự án
 	tạo 2 folder: client + server
 	cách tạo dự án reactjs: npx create-react-app {ten folder}  (trong ngoặc nhọn có thể thay đổi)
-	tạo folder server: npm init -y (tạo file packet.json)
-	ở folder server sẽ tải những thư viện để  viết api: nodemon, cors, express, mongodb, mongoose, dotenv
+	tạo folder server: 	 (tạo file packet.json)
+	ở folder server sẽ tải những thư viện để  viết api: nodemon, cors, express, mongodb, mongoose, dotenv, bcrypt, multer, cloudinary, multer-storage-cloudinary, jsonwebtoken
 		npm install {những thư viện cần sử dụng}
 	tạo 1 folder src trong server
 	tạo 1 file .env trong server (file .env là file lưu trữ những thông tin bảo mật ví dụ: port,
@@ -28,3 +28,20 @@ github
 	git push
 
 muốn lấy dự án của người khác về (vào folder muốn đặt) -> git clone https://github.com/Diep1421/quan-ly-thu-vien.git
+
+
+
+
+// chỉnh sửa lại modal, thêm sortby vào các bảng, statuscode sửa bg bị sai //done
+
+// thêm chức năng đề xuất sách dạng form truyền vào tên sách và moo tả
+//server max 3 tiếng note lúc bắt đầu làm 
+-> viết API propose b1 tạo model -> viết ở controller -> viết ở routes -> import vào index.js
+trong model propose sẽ có name va des
+4 api getAll, post, update ,delete
+
+//client max 3 tiếng note lúc bắt đầu làm 
+-> thêm api vào redux ở client, getAll thì có thêm vào store.js
+*** chú ý đặt tên file, api đúng chuẩn em quy định ***
+
+sau khi xong sẽ hướng dẫn làm token

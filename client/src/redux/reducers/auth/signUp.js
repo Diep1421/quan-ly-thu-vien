@@ -5,6 +5,6 @@ export const CallSignUp = async (data) => {
     const result = await http.post("/auth/signup", data);
     return result;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };

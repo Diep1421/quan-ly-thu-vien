@@ -6,6 +6,7 @@ const updateBook = async (req, res) => {
     const { id } = req.params; // Lấy id từ params
     const {
       title,
+
       description,
       published_date,
       isbn,
@@ -25,6 +26,7 @@ const updateBook = async (req, res) => {
         published_date,
         isbn,
         author,
+
         major,
         subject,
         department,
